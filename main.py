@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 
-import requests, cStringIO
+import requests, cStringIO, base64
+from flask import Flask, render_template, jsonify
+import numpy as np, mahotas as mh, time
+import matplotlib.pyplot as plt
+app = Flask(__name__)
+
+@app.route("/")
+def get_main():
+    return render_template('index.html')
 
 # temporary for debugging
 def save_to_desktop(image_content):
@@ -18,9 +26,21 @@ def get_static_map(lat, lon):
         'scale': 2}
     r = requests.get(base_url, params=params)
     save_to_desktop(r.content)
-    # TODO figure out the bounds of this image
     return r
 
+@app.route("/image_for_map")
+def get_image_for_map():
+    base_url = "http://maps.google.com/maps/api/staticmap"
+    params = {'center': ','.join((str(40.441), str(-80))),
+        'zoom': 18,
+        'size': '640x640',
+        'maptype': 'satellite',
+        'scale': 2}
+    r = requests.get(base_url, params=params)
+    # TODO ok you are returning an image! now mess with it.
+    return jsonify({'image': base64.b64encode(r.content)})
+
 if __name__=='__main__':
-    get_static_map(40.441667, -80)
+    # get_static_map(40.441667, -80)
+    app.run(debug=True)
 
