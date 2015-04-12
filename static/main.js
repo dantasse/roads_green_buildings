@@ -81,7 +81,7 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
       strokeWeight: 3
     });
     
-    var statsText = "here are stats<br>";
+    var statsText = "";
     var areaSum = 0;
     for (var i = 0; i < osm_content.features.length; i++) {
       var feature = osm_content.features[i];
@@ -108,7 +108,10 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
     var mapArea = getMapArea(map);
     statsText += "Map area: " + mapArea.toFixed(0) + "<br>";
     statsText += "Percent covered: " + (areaSum / mapArea).toFixed(2) + "<br>";
+    statsText += "Percent roads: " + data['pct_roads'].toFixed(2) + "<br>";
     $("#stats").html(statsText);
+    console.log(data['roads_image_url']);
+    $("#roads-image")[0].src = data['roads_image_url'];
   };
 
   var doit = function() {
@@ -128,10 +131,13 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
 
     var mapOptions = {
       zoom: 18,
+      minZoom: 17,
+      maxZoom: 19,
       center: new google.maps.LatLng(40.441667, -80),
       tilt: 0 // Disable 45-degree view of buildings.
     };
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    test = map;
 
   }
 
