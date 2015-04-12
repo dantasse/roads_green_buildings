@@ -7,13 +7,19 @@ require.config({
     jquery: 'jquery-1.11.2.min',
     google_maps: 'https://maps.googleapis.com/maps/api/js?v=3&libraries=geometry&key=AIzaSyDHVaCh9EcFtydDpNmpJyamhuv37APYQ_4',
     async: 'require-async',
+//    maplabel: 'maplabel',
+  },
+  shim: {
+    'maplabel': {
+      deps: ['async!google_maps']
+    }
   }
 });
 
 var osm_content_demo;
 var test;
 
-require(["osm_geojson", "jquery", "async!google_maps"], function() {
+require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
 
   var map;
 
@@ -27,8 +33,25 @@ require(["osm_geojson", "jquery", "async!google_maps"], function() {
     return google.maps.geometry.spherical.computeArea(corners);
   };
   
+  var getName = function(geojson_feature) {
+    return geojson_feature.properties.name;
+  }
+  
   var whatIsIt = function(geojson_feature) {
-    return "a polygon";
+    var props = geojson_feature.properties;
+    if(props.amenity) {
+      return "a " + props.amenity;
+    } else if (props.shop) {
+      return "a " + props.shop + " shop";
+    } else if (props.highway) {
+      return "a road";
+    } else if (props['building:levels']){
+      return "a " + props['building:levels'] + "-story building";
+    } else if (props['demolished:building'] == 'yes') {
+      return "a demolished building"
+    } else {
+      return "something";
+    }
   };
 
   // Takes in a geojson feature, computes its area w/ google maps API.
@@ -70,6 +93,15 @@ require(["osm_geojson", "jquery", "async!google_maps"], function() {
       areaSum += thisArea;
       var thisThingText = "" + type + ", " + thisArea.toFixed(0) + "<br>";
       statsText += thisThingText;
+      var coords = feature.geometry.coordinates[0][0];
+      var mapLabel = new MapLabel({
+          text: type,
+          position: new google.maps.LatLng(coords[1], coords[0]),
+          map: map,
+          fontSize: 12,
+          align: 'right'
+        });
+//      mapLabel.set('position', new google.maps.LatLng(34.03, -118.235));
     }
     statsText += "Total area: " + areaSum.toFixed(0) + "<br>";
     test = areaSum;
@@ -97,7 +129,7 @@ require(["osm_geojson", "jquery", "async!google_maps"], function() {
     var mapOptions = {
       zoom: 18,
       center: new google.maps.LatLng(40.441667, -80),
-      tilt: 0 // Disable 45-degree view, e.g. of buildings downtown.
+      tilt: 0 // Disable 45-degree view of buildings.
     };
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
