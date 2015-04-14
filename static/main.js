@@ -73,9 +73,14 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
   
   // I guess this is "we got some OSM data, now do something".
   var showImage = function(data, textStatus, jqXHR) {
-    var osm_content = osm_geojson.osm2geojson(data['osm_content']);
-    osm_content_demo = osm_content;
-    map.data.addGeoJson(osm_content);
+//    var osm_content = osm_geojson.osm2geojson(data['osm_content']);
+    var osm_content = data['megapolygon'];
+    osm_content_demo = osm_content; // for debugging
+    var geojson = JSON.parse(osm_content);
+    map.data.addGeoJson(geojson);
+//    map.data.addGeoJson(osm_content);
+    // TODO Pick up here!
+    // make sure you intersect this with the border of the map
     map.data.setStyle({
       fillColor: 'green',
       strokeWeight: 3
@@ -85,22 +90,24 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
     var areaSum = 0;
     for (var i = 0; i < osm_content.features.length; i++) {
       var feature = osm_content.features[i];
+//      var feature = geojson;
       if (!isPolygon(feature)) {
         continue;
       }
-      var type = whatIsIt(feature);
+//      var type = whatIsIt(feature);
       var thisArea = area(feature);
+    console.log(thisArea); // TODO why does this keep coming up with 0g
       areaSum += thisArea;
-      var thisThingText = "" + type + ", " + thisArea.toFixed(0) + "<br>";
-      statsText += thisThingText;
-      var coords = feature.geometry.coordinates[0][0];
-      var mapLabel = new MapLabel({
-          text: type,
-          position: new google.maps.LatLng(coords[1], coords[0]),
-          map: map,
-          fontSize: 12,
-          align: 'right'
-        });
+//      var thisThingText = "" + type + ", " + thisArea.toFixed(0) + "<br>";
+//      statsText += thisThingText;
+//      var coords = feature.geometry.coordinates[0][0];
+//      var mapLabel = new MapLabel({
+//          text: type,
+//          position: new google.maps.LatLng(coords[1], coords[0]),
+//          map: map,
+//          fontSize: 12,
+//          align: 'right'
+//        });
 //      mapLabel.set('position', new google.maps.LatLng(34.03, -118.235));
     }
     statsText += "Total area: " + areaSum.toFixed(0) + "<br>";
@@ -109,9 +116,11 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
     statsText += "Map area: " + mapArea.toFixed(0) + "<br>";
     statsText += "Percent covered: " + (areaSum / mapArea).toFixed(2) + "<br>";
     statsText += "Percent roads: " + data['pct_roads'].toFixed(2) + "<br>";
+    statsText += "Percent green: " + data['pct_green'].toFixed(2) + "<br>";
     $("#stats").html(statsText);
     console.log(data['roads_image_url']);
     $("#roads-image")[0].src = data['roads_image_url'];
+    $("#green-image")[0].src = 'data:image/png;base64,' + data['green_image'];
   };
 
   var doit = function() {
@@ -131,7 +140,7 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
 
     var mapOptions = {
       zoom: 18,
-      minZoom: 17,
+      minZoom: 1,
       maxZoom: 19,
       center: new google.maps.LatLng(40.441667, -80),
       tilt: 0 // Disable 45-degree view of buildings.
