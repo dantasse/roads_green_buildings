@@ -36,23 +36,6 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
   var getName = function(geojson_feature) {
     return geojson_feature.properties.name;
   }
-  
-  var whatIsIt = function(geojson_feature) {
-    var props = geojson_feature.properties;
-    if(props.amenity) {
-      return "a " + props.amenity;
-    } else if (props.shop) {
-      return "a " + props.shop + " shop";
-    } else if (props.highway) {
-      return "a road";
-    } else if (props['building:levels']){
-      return "a " + props['building:levels'] + "-story building";
-    } else if (props['demolished:building'] == 'yes') {
-      return "a demolished building"
-    } else {
-      return "something";
-    }
-  };
 
   // Takes in a geojson feature, computes its area w/ google maps API.
   var area = function(feature) {
@@ -78,6 +61,7 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
     osm_content_demo = osm_content; // for debugging
     var geojson = JSON.parse(osm_content);
     map.data.addGeoJson(geojson);
+    console.log(geojson.features);
 //    map.data.addGeoJson(osm_content);
     // TODO Pick up here!
     // make sure you intersect this with the border of the map
@@ -88,8 +72,8 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
     
     var statsText = "";
     var areaSum = 0;
-    for (var i = 0; i < osm_content.features.length; i++) {
-      var feature = osm_content.features[i];
+    for (var i = 0; i < geojson.features.length; i++) {
+      var feature = geojson.features[i];
 //      var feature = geojson;
       if (!isPolygon(feature)) {
         continue;
@@ -117,10 +101,12 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
     statsText += "Percent covered: " + (areaSum / mapArea).toFixed(2) + "<br>";
     statsText += "Percent roads: " + data['pct_roads'].toFixed(2) + "<br>";
     statsText += "Percent green: " + data['pct_green'].toFixed(2) + "<br>";
+    statsText += "Percent buildings: " + data['pct_buildings'].toFixed(2) + "<br>";
     $("#stats").html(statsText);
     console.log(data['roads_image_url']);
     $("#roads-image")[0].src = data['roads_image_url'];
     $("#green-image")[0].src = 'data:image/png;base64,' + data['green_image'];
+    $("#buildings-image")[0].src = 'data:image/png;base64,' + data['buildings_image'];
   };
 
   var doit = function() {
@@ -140,7 +126,7 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
 
     var mapOptions = {
       zoom: 18,
-      minZoom: 1,
+      minZoom: 17,
       maxZoom: 19,
       center: new google.maps.LatLng(40.441667, -80),
       tilt: 0 // Disable 45-degree view of buildings.
