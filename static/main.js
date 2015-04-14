@@ -16,10 +16,7 @@ require.config({
   }
 });
 
-var osm_content_demo;
-var test;
-
-require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
+require(["jquery", "async!google_maps", "maplabel"], function() {
 
   var map;
 
@@ -32,73 +29,12 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
     var corners = [ne, nw, sw, se, ne];
     return google.maps.geometry.spherical.computeArea(corners);
   };
-  
-  var getName = function(geojson_feature) {
-    return geojson_feature.properties.name;
-  }
 
-  // Takes in a geojson feature, computes its area w/ google maps API.
-  var area = function(feature) {
-    var latLngArray = [];
-    for (var i = 0; i < feature.geometry.coordinates[0].length; i++) {
-      var arr = feature.geometry.coordinates[0][i];
-      latLngArray.push(new google.maps.LatLng(arr[1], arr[0]));
-    }
-    return google.maps.geometry.spherical.computeArea(latLngArray);
-  }
-
-  // Returns true iff this thing is a closed polygon (representing a
-  // building or other use of space).
-  var isPolygon = function(geojson_feature) {
-    return geojson_feature.geometry.type == "Polygon";
-    // TODO multipolygons too?
-  }
-  
-  // I guess this is "we got some OSM data, now do something".
+  // I guess this is "we got some data, now do something".
   var showImage = function(data, textStatus, jqXHR) {
-//    var osm_content = osm_geojson.osm2geojson(data['osm_content']);
-    var osm_content = data['megapolygon'];
-    osm_content_demo = osm_content; // for debugging
-    var geojson = JSON.parse(osm_content);
-    map.data.addGeoJson(geojson);
-    console.log(geojson.features);
-//    map.data.addGeoJson(osm_content);
-    // TODO Pick up here!
-    // make sure you intersect this with the border of the map
-    map.data.setStyle({
-      fillColor: 'green',
-      strokeWeight: 3
-    });
-    
-    var statsText = "";
-    var areaSum = 0;
-    for (var i = 0; i < geojson.features.length; i++) {
-      var feature = geojson.features[i];
-//      var feature = geojson;
-      if (!isPolygon(feature)) {
-        continue;
-      }
-//      var type = whatIsIt(feature);
-      var thisArea = area(feature);
-    console.log(thisArea); // TODO why does this keep coming up with 0g
-      areaSum += thisArea;
-//      var thisThingText = "" + type + ", " + thisArea.toFixed(0) + "<br>";
-//      statsText += thisThingText;
-//      var coords = feature.geometry.coordinates[0][0];
-//      var mapLabel = new MapLabel({
-//          text: type,
-//          position: new google.maps.LatLng(coords[1], coords[0]),
-//          map: map,
-//          fontSize: 12,
-//          align: 'right'
-//        });
-//      mapLabel.set('position', new google.maps.LatLng(34.03, -118.235));
-    }
-    statsText += "Total area: " + areaSum.toFixed(0) + "<br>";
-    test = areaSum;
     var mapArea = getMapArea(map);
+    var statsText = "";
     statsText += "Map area: " + mapArea.toFixed(0) + "<br>";
-    statsText += "Percent covered: " + (areaSum / mapArea).toFixed(2) + "<br>";
     statsText += "Percent roads: " + data['pct_roads'].toFixed(2) + "<br>";
     statsText += "Percent green: " + data['pct_green'].toFixed(2) + "<br>";
     statsText += "Percent buildings: " + data['pct_buildings'].toFixed(2) + "<br>";
@@ -132,8 +68,6 @@ require(["osm_geojson", "jquery", "async!google_maps", "maplabel"], function() {
       tilt: 0 // Disable 45-degree view of buildings.
     };
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-    test = map;
-
   }
 
   initialize();

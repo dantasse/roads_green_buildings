@@ -69,38 +69,6 @@ def get_percent_green(img):
 
 @app.route("/image_for_map")
 def get_image_for_map():
-    osm_url = "http://api.openstreetmap.org/api/0.6/map"
-    left = request.args.get('sw_lng')
-    bottom = request.args.get('sw_lat')
-    right = request.args.get('ne_lng')
-    top = request.args.get('ne_lat')
-    osm_params = {'bbox': ','.join((left, bottom, right, top))}
-    osm_res = requests.get(osm_url, params=osm_params)
-#    print osm_res.content
-    outfile = open('foo.osm', 'w') # TODO ugh
-    outfile.write(osm_res.content)
-    outfile.close()
-    nodes = {} # node ID -> (lon, lat) pair - (x, y) like shapely.
-    ways = []
-    polygons = []
-    for entity in osmread.parse_file('foo.osm'):
-        if isinstance(entity, osmread.Node):
-            nodes[entity.id] = (entity.lon, entity.lat)
-        elif isinstance(entity, osmread.Way):
-            ways.append(entity)
-
-    for way in ways:
-        if 'building' not in way.tags:
-            continue
-        node_ids = way.nodes
-        points = [nodes[id] for id in node_ids]
-        if len(points) < 3:
-            continue
-        newpoly = Polygon(points)
-        if newpoly.is_valid: # TODO why are some polygons invalid?
-            polygons.append(newpoly)
-    megapolygon = shapely.ops.cascaded_union(polygons)
-
 
     # FIND PERCENT ROADS
     static_map_url = "https://maps.googleapis.com/maps/api/staticmap"
@@ -156,9 +124,7 @@ def get_image_for_map():
 
     #    print json.dumps({'type': 'Feature', 'properties':{}, 'geometry': shapely.geometry.mapping(megapolygon)})
     
-    return jsonify({'osm_content': osm_res.content,
-                    'megapolygon': json.dumps({'type': 'FeatureCollection', 'features': [{'type': 'Feature', 'geometry': shapely.geometry.mapping(megapolygon)}]}),
-                    'roads_image_url': roads_url,
+    return jsonify({'roads_image_url': roads_url,
                     'pct_roads': percent_roads,
                     'green_image': base64.b64encode(green_image),
                     'pct_green': percent_green,
