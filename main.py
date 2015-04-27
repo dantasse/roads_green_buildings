@@ -25,7 +25,20 @@ def save_to_desktop(image_content, filename):
     outfile = open('/Users/dtasse/Desktop/' + filename, 'w')
     outfile.write(image_content)
     outfile.close()
-    
+
+# img is a numpy array, WIDTH x HEIGHT x 3 (rgb).
+# Returns an img w/ red roads, transparent elsewhere.
+def get_roads_image(img):
+    roads_pixels = (img[:,:,0] > 250)
+#    bldg = (img[:,:,0] > 250) * (img[:,:,1]==240) * (img[:,:,2]==233)
+#    bldg2 = (img[:,:,0]==242) * (img[:,:,1]==238) * (img[:,:,2]==226)
+#    bldg_pixels = np.logical_or(bldg, bldg2)
+#    roads_pixels = mh.gaussian_filter(roads_pixels, 3) > .5
+    alpha = np.ones(img.shape[0:2]).astype('uint8') * 255
+    img = np.dstack((img[:,:,0], img[:,:,1], img[:,:,2], alpha))
+    img[-roads_pixels] = [0,0,0,0]
+    return img
+
 # img is a numpy array, WIDTH x HEIGHT x 3 (rgb).
 def get_percent_red(img):
     # numpy: * is per-item.
@@ -74,7 +87,7 @@ def get_percent_green(img):
 @app.route("/image_for_map")
 def get_image_for_map():
 
-    # FIND PERCENT ROADS
+    # FIND ROADS
     static_map_url = "https://maps.googleapis.com/maps/api/staticmap"
     center_lat = request.args.get('center_lat')
     center_lng = request.args.get('center_lng')
@@ -88,8 +101,11 @@ def get_image_for_map():
     }
 
     roads_url = '?'.join([static_map_url, urllib.urlencode(roads_params, doseq=True)])
-    roads_img = io.imread(roads_url) # reads as a numpy array
-    percent_roads = get_percent_red(roads_img)
+    roads_static_maps_img = io.imread(roads_url) # reads as a numpy array
+    percent_roads = get_percent_red(roads_static_maps_img)
+    roads_image = get_roads_image(roads_static_maps_img)
+    mh.imsave('foo.png', roads_image)
+    roads_image = open('foo.png').read()
     
     # FIND BUILDINGS
     buildings_params = {'center': ','.join((center_lat, center_lng)),
@@ -126,7 +142,7 @@ def get_image_for_map():
     green_image = open('foo.png').read()
     # TODO blah, f this! at the very least, use a stringio or something.
 
-    return jsonify({'roads_image_url': roads_url,
+    return jsonify({'roads_image': base64.b64encode(roads_image),
                     'pct_roads': percent_roads,
                     'green_image': base64.b64encode(green_image),
                     'pct_green': percent_green,

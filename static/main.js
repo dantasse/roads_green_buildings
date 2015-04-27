@@ -39,7 +39,7 @@ require(["jquery", "async!google_maps", "maplabel"], function() {
     statsText += "Percent green: " + data['pct_green'].toFixed(2) + "<br>";
     statsText += "Percent buildings: " + data['pct_buildings'].toFixed(2) + "<br>";
     $("#stats").html(statsText);
-    $("#roads-image")[0].src = data['roads_image_url'];
+    $("#roads-image")[0].src = 'data:image/png;base64,' + data['roads_image'];
     $("#green-image")[0].src = 'data:image/png;base64,' + data['green_image'];
     $("#buildings-image")[0].src = 'data:image/png;base64,' + data['buildings_image'];
   };
