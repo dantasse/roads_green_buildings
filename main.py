@@ -38,7 +38,9 @@ def get_green_image(img):
     imghsv = skimage.color.rgb2hsv(img)
     greenpixels = (imghsv[:,:,0] > .2) * (imghsv[:,:,0] < .7) * (imghsv[:,:,1] > .1)
     greenpixels = mh.gaussian_filter(greenpixels, 3) > .5
-    img[-greenpixels] = [255,255,255]
+    alpha = np.ones(img.shape[0:2]).astype('uint8') * 255
+    img = np.dstack((img[:,:,0], img[:,:,1], img[:,:,2], alpha))
+    img[-greenpixels] = [255,255,255,0]
     return img
   
 def get_percent_building(img):
@@ -54,7 +56,9 @@ def get_building_image(img):
     bldg2 = (img[:,:,0]==242) * (img[:,:,1]==238) * (img[:,:,2]==226)
     bldg_pixels = np.logical_or(bldg, bldg2)
     bldg_pixels = mh.gaussian_filter(bldg_pixels, 3) > .5
-    img[-bldg_pixels] = [0,0,0]
+    alpha = np.ones(img.shape[0:2]).astype('uint8') * 255
+    img = np.dstack((img[:,:,0], img[:,:,1], img[:,:,2], alpha))
+    img[-bldg_pixels] = [0,0,0,0]
     return img
   
 # img is a numpy array, WIDTH x HEIGHT x 3 (rgb).
@@ -122,8 +126,6 @@ def get_image_for_map():
     green_image = open('foo.png').read()
     # TODO blah, f this! at the very least, use a stringio or something.
 
-    #    print json.dumps({'type': 'Feature', 'properties':{}, 'geometry': shapely.geometry.mapping(megapolygon)})
-    
     return jsonify({'roads_image_url': roads_url,
                     'pct_roads': percent_roads,
                     'green_image': base64.b64encode(green_image),

@@ -6,13 +6,32 @@
     <meta charset="utf-8">
     <script data-main="/static/main" src="/static/require.js"></script>
     <style>
+      body {
+      }
       #map-canvas, #roads-image, #green-image, #buildings-image {
+        position: absolute;
+        top: 10px;
+        left: 10px;
         height: 640px;
         width: 640px;
         margin: 0px;
         padding: 0px;
         float: left;
       }
+      #roads-image {
+        z-index: 1;
+      }
+      #buildings-image {
+        z-index: 2;
+      }
+      #green-image {
+        z-index: 3;
+      }
+      #controls {
+        position:absolute;
+        top: 650px;
+      }
+      
     </style>
   </head>
   <body>
@@ -21,6 +40,14 @@
     <img id="roads-image">
     <img id="green-image">
     <img id="buildings-image">
-    <input type="button" value="Do a thing" id="doit"></input>
+    <div id="controls">
+      <input type="button" value="Do a thing" id="doit"></input>
+      <input type="checkbox" id="chkRoads" checked></input>
+      <label for="chkRoads">Roads</label>
+      <input type="checkbox" id="chkBldgs" checked></input>
+      <label for="chkBldgs">Buildings</label>
+      <input type="checkbox" id="chkGreen" checked></input>
+      <label for="chkGreen">Green space</label>
+    </div>
   </body>
 </html>

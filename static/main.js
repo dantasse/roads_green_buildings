@@ -7,7 +7,6 @@ require.config({
     jquery: 'jquery-1.11.2.min',
     google_maps: 'https://maps.googleapis.com/maps/api/js?v=3&libraries=geometry&key=AIzaSyDHVaCh9EcFtydDpNmpJyamhuv37APYQ_4',
     async: 'require-async',
-//    maplabel: 'maplabel',
   },
   shim: {
     'maplabel': {
@@ -15,6 +14,7 @@ require.config({
     }
   }
 });
+
 
 require(["jquery", "async!google_maps", "maplabel"], function() {
 
@@ -39,7 +39,6 @@ require(["jquery", "async!google_maps", "maplabel"], function() {
     statsText += "Percent green: " + data['pct_green'].toFixed(2) + "<br>";
     statsText += "Percent buildings: " + data['pct_buildings'].toFixed(2) + "<br>";
     $("#stats").html(statsText);
-    console.log(data['roads_image_url']);
     $("#roads-image")[0].src = data['roads_image_url'];
     $("#green-image")[0].src = 'data:image/png;base64,' + data['green_image'];
     $("#buildings-image")[0].src = 'data:image/png;base64,' + data['buildings_image'];
@@ -68,6 +67,30 @@ require(["jquery", "async!google_maps", "maplabel"], function() {
       tilt: 0 // Disable 45-degree view of buildings.
     };
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    
+    $("#chkGreen").click(function() {
+      if ($("#chkGreen").prop("checked")) {
+        $("#green-image").show();
+      } else {
+        $("#green-image").hide();
+      }
+    });
+    $("#chkBldgs").click(function() {
+      if ($("#chkBldgs").prop("checked")) {
+        $("#buildings-image").show();
+      } else {
+        $("#buildings-image").hide();
+      }
+    });
+    $("#chkRoads").click(function() {
+      if ($("#chkRoads").prop("checked")) {
+        $("#roads-image").show();
+      } else {
+        $("#roads-image").hide();
+      }
+    });
+    // TODO fix z-index of these
+    
   }
 
   initialize();
