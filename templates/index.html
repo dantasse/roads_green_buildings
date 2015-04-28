@@ -7,47 +7,62 @@
     <script data-main="/static/main" src="/static/require.js"></script>
     <style>
       body {
+        background-image: url('static/concrete.png');
+      }
+      #title {
+        text-align: center;
+        width: 640px;
       }
       #map-canvas, #roads-image, #green-image, #buildings-image {
         position: absolute;
-        top: 10px;
-        left: 10px;
+/*        top: 10px;*/
+/*        left: 10px;*/
         height: 640px;
         width: 640px;
         margin: 0px;
         padding: 0px;
         float: left;
       }
-      #roads-image {
-        z-index: 1;
+      #maps {
+        position: relative;
+        margin-left: auto;
+        margin-right: auto;
+        width: 700px;
       }
-      #buildings-image {
-        z-index: 2;
-      }
-      #green-image {
-        z-index: 3;
-      }
+      #roads-image { z-index: 1; }
+      #buildings-image { z-index: 2; }
+      #green-image { z-index: 3; }
       #controls {
-        position:absolute;
+/*        position: absolute;*/
+/*        top: 650px;*/
+      }
+      #stats {
         top: 650px;
       }
       
     </style>
   </head>
   <body>
-    <div id="map-canvas"></div>
-    <div id="stats"></div>
-    <img id="roads-image">
-    <img id="green-image">
-    <img id="buildings-image">
-    <div id="controls">
-      <input type="button" value="Do a thing" id="doit"></input>
-      <input type="checkbox" id="chkRoads" checked></input>
-      <label for="chkRoads">Roads</label>
-      <input type="checkbox" id="chkBldgs" checked></input>
-      <label for="chkBldgs">Buildings</label>
-      <input type="checkbox" id="chkGreen" checked></input>
-      <label for="chkGreen">Green space</label>
-    </div>
+    <div id="maps">
+      <h2 id="title">RGB Index</h2>
+    
+      <div id="controls">
+        Enter a location:
+        <input type="text" id="searchLocation"></input>
+        <input type="button" value="Search" id="doit"></input>
+        <input type="checkbox" id="chkRoads" checked></input>
+        <label for="chkRoads">Roads</label>
+        <input type="checkbox" id="chkGreen" checked></input>
+        <label for="chkGreen">Green space</label>
+        <input type="checkbox" id="chkBldgs" checked></input>
+        <label for="chkBldgs">Buildings</label>
+      </div>
+      <div id="map-canvas"></div>
+      <img id="roads-image">
+      <img id="green-image">
+      <img id="buildings-image">
+      <div id="stats"></div>
+
+  </div>
   </body>
 </html>

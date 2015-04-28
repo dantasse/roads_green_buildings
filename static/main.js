@@ -1,5 +1,4 @@
 'use strict';
-// (function() {
 
 require.config({
   baseUrl: 'static/',
@@ -16,9 +15,10 @@ require.config({
 });
 
 
-require(["jquery", "async!google_maps", "maplabel"], function() {
+require(["jquery", "async!google_maps"], function() {
 
   var map;
+  var geocoder = new google.maps.Geocoder();
 
   // Gets the area that is currently visible.
   var getMapArea = function(map) {
@@ -34,17 +34,30 @@ require(["jquery", "async!google_maps", "maplabel"], function() {
   var showImage = function(data, textStatus, jqXHR) {
     var mapArea = getMapArea(map);
     var statsText = "";
-    statsText += "Map area: " + mapArea.toFixed(0) + "<br>";
-    statsText += "Percent roads: " + data['pct_roads'].toFixed(2) + "<br>";
-    statsText += "Percent green: " + data['pct_green'].toFixed(2) + "<br>";
-    statsText += "Percent buildings: " + data['pct_buildings'].toFixed(2) + "<br>";
+    statsText += "This place is: ";
+    statsText += "Percent roads: " + data['pct_roads'].toFixed(2) * 100 + "<br>";
+    statsText += "Percent green: " + data['pct_green'].toFixed(2) * 100 + "<br>";
+    statsText += "Percent buildings: " + data['pct_buildings'].toFixed(2) * 100 + "<br>";
     $("#stats").html(statsText);
+    console.log(statsText);
     $("#roads-image")[0].src = 'data:image/png;base64,' + data['roads_image'];
     $("#green-image")[0].src = 'data:image/png;base64,' + data['green_image'];
     $("#buildings-image")[0].src = 'data:image/png;base64,' + data['buildings_image'];
   };
 
   var doit = function() {
+    var searchText = $("#searchLocation").val();
+    if (searchText.trim() == '') {
+      call_server();
+    } else {
+      geocoder.geocode({'address': searchText}, function(res, status) {
+        map.setCenter(res[0].geometry.location);
+        call_server();
+      });
+    }
+  };
+  
+  var call_server = function() {
     var sw = map.getBounds().getSouthWest();
     var ne = map.getBounds().getNorthEast();
     var center = map.getCenter();
@@ -89,8 +102,6 @@ require(["jquery", "async!google_maps", "maplabel"], function() {
         $("#roads-image").hide();
       }
     });
-    // TODO fix z-index of these
-    
   }
 
   initialize();
