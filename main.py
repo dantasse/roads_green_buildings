@@ -30,10 +30,6 @@ def save_to_desktop(image_content, filename):
 # Returns an img w/ red roads, transparent elsewhere.
 def get_roads_image(img):
     roads_pixels = (img[:,:,0] > 250)
-#    bldg = (img[:,:,0] > 250) * (img[:,:,1]==240) * (img[:,:,2]==233)
-#    bldg2 = (img[:,:,0]==242) * (img[:,:,1]==238) * (img[:,:,2]==226)
-#    bldg_pixels = np.logical_or(bldg, bldg2)
-#    roads_pixels = mh.gaussian_filter(roads_pixels, 3) > .5
     alpha = np.ones(img.shape[0:2]).astype('uint8') * 255
     img = np.dstack((img[:,:,0], img[:,:,1], img[:,:,2], alpha))
     img[-roads_pixels] = [0,0,0,0]
@@ -56,22 +52,52 @@ def get_green_image(img):
     img[-greenpixels] = [255,255,255,0]
     return img
   
+# returns true iff this point is a building color
+def is_bldg(p):
+  goodpts = ([242, 240, 233], [242, 238, 226], [244, 242, 234],
+            [210, 210, 217], [248, 248, 240], [217, 217, 217],
+            [203, 202, 213])
+  return np.any([np.all(p == goodpt) for goodpt in goodpts])
+  
 def get_percent_building(img):
     # 242 240 233 is the interior building RGB.
     # 242 238 226 is close too.
     # 233 229 220 is background.
+    # other roofs: (244, 242, 234), (210 210 217), (248 248 240), (217 217 217), (203 202 213)
+    
+    # TODO ugh all this whole dang function.
     bldg = (img[:,:,0]==242) * (img[:,:,1]==240) * (img[:,:,2]==233)
     bldg2 = (img[:,:,0]==242) * (img[:,:,1]==238) * (img[:,:,2]==226)
-    return sum(sum(np.logical_or(bldg, bldg2))) * 1.0 / (WIDTH * HEIGHT)
-  
+    bldg3 = (img[:,:,0]==244) * (img[:,:,1]==242) * (img[:,:,2]==234)
+    bldg4 = (img[:,:,0]==210) * (img[:,:,1]==210) * (img[:,:,2]==217)
+    bldg5 = (img[:,:,0]==248) * (img[:,:,1]==248) * (img[:,:,2]==240)
+    bldg6 = (img[:,:,0]==217) * (img[:,:,1]==217) * (img[:,:,2]==217)
+    bldg7 = (img[:,:,0]==203) * (img[:,:,1]==202) * (img[:,:,2]==213)
+    bldg8 = (img[:,:,0]==242) * (img[:,:,1]==242) * (img[:,:,2]==234)
+    bldg9 = (img[:,:,0]==255) * (img[:,:,1]==255) * (img[:,:,2]==255)
+    bldg10 = (img[:,:,0]==251) * (img[:,:,1]==247) * (img[:,:,2]==242)
+    bldg11 = (img[:,:,0]==210) * (img[:,:,1]==207) * (img[:,:,2]==217)
+    return sum(sum((bldg + bldg2 + bldg3 + bldg4 + bldg5 + bldg6 + bldg7 + bldg8 + bldg9 + bldg10 + bldg11))) * 1.0 / (WIDTH * HEIGHT)
+
 def get_building_image(img):
     bldg = (img[:,:,0]==242) * (img[:,:,1]==240) * (img[:,:,2]==233)
     bldg2 = (img[:,:,0]==242) * (img[:,:,1]==238) * (img[:,:,2]==226)
-    bldg_pixels = np.logical_or(bldg, bldg2)
+    bldg3 = (img[:,:,0]==244) * (img[:,:,1]==242) * (img[:,:,2]==234)
+    bldg4 = (img[:,:,0]==210) * (img[:,:,1]==210) * (img[:,:,2]==217)
+    bldg5 = (img[:,:,0]==248) * (img[:,:,1]==248) * (img[:,:,2]==240)
+    bldg6 = (img[:,:,0]==217) * (img[:,:,1]==217) * (img[:,:,2]==217)
+    bldg7 = (img[:,:,0]==203) * (img[:,:,1]==202) * (img[:,:,2]==213)
+    bldg8 = (img[:,:,0]==242) * (img[:,:,1]==242) * (img[:,:,2]==234)
+    bldg9 = (img[:,:,0]==255) * (img[:,:,1]==255) * (img[:,:,2]==255)
+    bldg10 = (img[:,:,0]==251) * (img[:,:,1]==247) * (img[:,:,2]==242)
+    bldg11 = (img[:,:,0]==210) * (img[:,:,1]==207) * (img[:,:,2]==217)
+    # TODO also ugh.
+    bldg_pixels = bldg + bldg2 + bldg3 + bldg4 + bldg5 + bldg6 + bldg7 + bldg8 + bldg9 + bldg10 + bldg11
     bldg_pixels = mh.gaussian_filter(bldg_pixels, 3) > .5
     alpha = np.ones(img.shape[0:2]).astype('uint8') * 255
     img = np.dstack((img[:,:,0], img[:,:,1], img[:,:,2], alpha))
     img[-bldg_pixels] = [0,0,0,0]
+    img[bldg_pixels] = [0, 0, 255, 255]
     return img
   
 # img is a numpy array, WIDTH x HEIGHT x 3 (rgb).
@@ -81,7 +107,6 @@ def get_percent_green(img):
     imghsv = skimage.color.rgb2hsv(img)
     greenpixels = (imghsv[:,:,0] > .2) * (imghsv[:,:,0] < .7) * (imghsv[:,:,1] > .1)
     greenpixels = mh.gaussian_filter(greenpixels, 3) > .5
-    print sum(sum(greenpixels)) * 1.0 / (640*640)
     return sum(sum(greenpixels)) * 1.0 / (640*640)
 
 @app.route("/image_for_map")
