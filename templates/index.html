@@ -1,55 +1,47 @@
 <!DOCTYPE html>
 <html>
   <head>
-
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <script data-main="/static/main" src="/static/require.js"></script>
     <style>
-      body {
-        background-image: url('static/concrete.png');
-      }
+      body { background-image: url('static/concrete.png'); }
       #title {
         text-align: center;
         width: 640px;
       }
       #map-canvas, #roads-image, #green-image, #buildings-image {
         position: absolute;
-/*        top: 10px;*/
-/*        left: 10px;*/
         height: 640px;
         width: 640px;
         margin: 0px;
         padding: 0px;
         float: left;
       }
-      #maps {
-        position: relative;
-        margin-left: auto;
-        margin-right: auto;
-        width: 700px;
+      #leftcol {
+        padding:0 30px;
       }
+
       #roads-image { z-index: 1; }
       #buildings-image { z-index: 2; }
       #green-image { z-index: 3; }
-      #controls {
-/*        position: absolute;*/
-/*        top: 650px;*/
-      }
-      #stats {
-        top: 650px;
+      #stats { text-align: right; }
+      .pct {
+        font-size: 2em;
       }
       
     </style>
   </head>
   <body>
-    <div id="maps">
-      <h2 id="title">RGB Index</h2>
-    
+  <div class="row">
+    <div class="col-md-6" id="leftcol">
+      <h2 id="title">Roads Green Buildings</h2>
+
       <div id="controls">
         Enter a location:
-        <input type="text" id="searchLocation"></input>
-        <input type="button" value="Search" id="doit"></input>
+        <input type="text" id="searchLocation" tabindex="1"></input>
+        <input type="button" value="Search" id="doit" tabindex="2"></input>
         <input type="checkbox" id="chkRoads" checked></input>
         <label for="chkRoads">Roads</label>
         <input type="checkbox" id="chkGreen" checked></input>
@@ -61,8 +53,10 @@
       <img id="roads-image">
       <img id="green-image">
       <img id="buildings-image">
+    </div>
+    <div class="col-md-6">
       <div id="stats"></div>
-
+    </div>
   </div>
-  </body>
+</body>
 </html>

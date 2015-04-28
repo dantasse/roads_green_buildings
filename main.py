@@ -96,13 +96,13 @@ def get_building_image(img):
 # inexact because who knows exactly what green color you've got.
 def get_percent_green(img):
     imghsv = skimage.color.rgb2hsv(img)
-    greenpixels = (imghsv[:,:,0] > .2) * (imghsv[:,:,0] < .7) * (imghsv[:,:,1] > .1)
+    greenpixels = (imghsv[:,:,0] > .2) * (imghsv[:,:,0] < .7) * (imghsv[:,:,1] > .18)
     greenpixels = mh.gaussian_filter(greenpixels, 2) > .5
     return sum(sum(greenpixels)) * 1.0 / (640*640)
 
 def get_green_image(img):
     imghsv = skimage.color.rgb2hsv(img)
-    greenpixels = (imghsv[:,:,0] > .2) * (imghsv[:,:,0] < .7) * (imghsv[:,:,1] > .1)
+    greenpixels = (imghsv[:,:,0] > .2) * (imghsv[:,:,0] < .7) * (imghsv[:,:,1] > .18)
     greenpixels = mh.gaussian_filter(greenpixels, 2) > .5
     alpha = np.ones(img.shape[0:2]).astype('uint8') * 255
     img = np.dstack((img[:,:,0], img[:,:,1], img[:,:,2], alpha))
