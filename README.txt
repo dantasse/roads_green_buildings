@@ -1,8 +1,9 @@
-imposm from:
-http://imposm.org/docs/imposm/latest/install.html
+Roads Green Buildings
 
-require.js
+How much of your neighborhood is taken up by each?
 
-background from subtle patterns
+Uses:
+require.js from http://requirejs.org/
+background from subtle patterns http://subtlepatterns.com/
+bootstrap CSS from http://getbootstrap.com/
 
-bootstrap
