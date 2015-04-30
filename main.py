@@ -3,12 +3,8 @@
 import requests, cStringIO, base64, pprint, urllib, time, json
 from flask import Flask, render_template, jsonify, request
 import numpy as np, mahotas as mh
-import matplotlib.pyplot as plt
 from skimage import io
 import skimage.color
-import osmread
-from shapely.geometry import Point, Polygon
-import shapely.ops, shapely.geometry
 
 app = Flask(__name__)
 
