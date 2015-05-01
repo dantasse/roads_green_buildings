@@ -32,6 +32,12 @@ require(["jquery", "async!google_maps"], function() {
         statsText += "<span class='pct'>" + vals[1].toFixed(0) + "%</span> green, ";
         statsText += "<span class='pct'>" + vals[2].toFixed(0) + "%</span> buildings.";
         statsText += "<br>";
+        statsText += "<span class='bar roads-bar' style='width:" + vals[0] * 3 + "px;'></span>";
+        statsText += "<span class='bar green-bar' style='width:" + vals[1] * 3 + "px;'></span>";
+        statsText += "<span class='bar buildings-bar' style='width:" + vals[2] * 3 + "px;'></span>";
+        var otherPct = (100 - vals[0] - vals[1] - vals[2]);
+        statsText += "<span class='bar other-bar' style='width:" + otherPct * 3 + "px;'></span>";
+        statsText += "<br>";
       }
     }
     return statsText;
