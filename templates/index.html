@@ -16,11 +16,13 @@
     </script>
     <script data-main="/static/main" src="/static/require.js"></script>
     <style>
-      body { background-image: url('static/concrete.png'); }
-      #title {
-        text-align: center;
-        width: 640px;
+      body {
+        background-image: url('static/concrete.png');
+        padding: 0 30px 10px 30px;
       }
+      #title { text-align: center; }
+      #subtitle { text-align: center; }
+      #footer { margin-top: 660px; }
       #map-canvas, #roads-image, #green-image, #buildings-image {
         position: absolute;
         height: 640px;
@@ -29,16 +31,13 @@
         padding: 0px;
         float: left;
       }
-      #leftcol {
-        padding:0 30px;
-      }
 
       #roads-image { z-index: 1; }
       #buildings-image { z-index: 2; }
       #green-image { z-index: 3; }
       #stats { text-align: right; }
       .pct {
-        font-size: 2em;
+        font-size: 1.5em;
       }
       .bar {
         height: 20px;
@@ -59,9 +58,10 @@
 
   </head>
   <body>
+  <h2 id="title">Roads Greenery Buildings</h2>
+  <h5 id="subtitle">What is your neighborhood made of?</h5>
   <div class="row">
-    <div class="col-md-6" id="leftcol">
-      <h2 id="title">Roads Green Buildings</h2>
+    <div class="col-md-7" id="leftcol">
 
       <div id="controls">
         Enter a location:
@@ -80,10 +80,11 @@
       <img id="green-image">
       <img id="buildings-image">
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       <div id="stats"></div>
     </div>
   </div>
+  <div id="footer">A project by <a href="http://www.dantasse.com">Dan Tasse</a></div>
 
 </body>
 </html>
