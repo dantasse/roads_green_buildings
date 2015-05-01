@@ -16,12 +16,6 @@ HEIGHT = 640
 def get_main():
     return render_template('index.html')
 
-# temporary for debugging
-def save_to_desktop(image_content, filename):
-    outfile = open('/Users/dtasse/Desktop/' + filename, 'w')
-    outfile.write(image_content)
-    outfile.close()
-
 # img is a numpy array, WIDTH x HEIGHT x 3 (rgb).
 # Returns an img w/ red roads, transparent elsewhere.
 def get_roads_image(img):
@@ -29,6 +23,7 @@ def get_roads_image(img):
     alpha = np.ones(img.shape[0:2]).astype('uint8') * 255
     img = np.dstack((img[:,:,0], img[:,:,1], img[:,:,2], alpha))
     img[-roads_pixels] = [0,0,0,0]
+    img[roads_pixels] = [228, 26, 28, 255]
     return img
 
 # img is a numpy array, WIDTH x HEIGHT x 3 (rgb).
@@ -84,7 +79,7 @@ def get_building_image(img):
     alpha = np.ones(img.shape[0:2]).astype('uint8') * 255
     img = np.dstack((img[:,:,0], img[:,:,1], img[:,:,2], alpha))
     img[-bldg_pixels] = [0,0,0,0]
-    img[bldg_pixels] = [0, 0, 255, 255]
+    img[bldg_pixels] = [55, 126, 184, 255]
     return img
   
 # img is a numpy array, WIDTH x HEIGHT x 3 (rgb).
