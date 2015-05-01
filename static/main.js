@@ -44,6 +44,7 @@ require(["jquery", "async!google_maps"], function() {
   }
   // I guess this is "we got some data, now do something".
   var showImage = function(data, textStatus, jqXHR) {
+    $(".spinner").css("visibility", "hidden");
     var statsText = "";
     var key = "";
     if ($("#searchLocation").val().trim() == "") {
@@ -66,6 +67,7 @@ require(["jquery", "async!google_maps"], function() {
   };
 
   var doit = function() {
+    $(".spinner").css("visibility", "visible");
     var searchText = $("#searchLocation").val();
     if (searchText.trim() == '') {
       callServer();
