@@ -124,6 +124,12 @@ require(["jquery", "async!google_maps"], function() {
         $("#roads-image").hide();
       }
     });
+    $('#searchLocation').keydown(function(event) {
+      if (event.keyCode == 13) {
+        $("#doit").click();
+        return false;
+       }
+    });
   }
 
   initialize();
