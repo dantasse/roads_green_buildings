@@ -166,5 +166,5 @@ def get_image_for_map():
                     'pct_buildings': percent_buildings})
 
 if __name__=='__main__':
-    app.run(debug=True)
+    app.run(debug=False)
 
